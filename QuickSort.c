@@ -43,11 +43,11 @@ void printArray(int arr[], int n){
 }
 
 int main(){
-    int n;
+    int n, arr[100];
     printf("Enter population: ");  //Denoting the size
     scanf("%d",&n);
 
-    int arr[n];  //Declaring an array of size n
+    // int arr[n];  //Declaring an array of size n
     printf("Enter elements in array: ");  //Taking user inputs for array element
     for (int i=0; i<n; i++){
         scanf("%d", &arr[i]);
