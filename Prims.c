@@ -1,47 +1,52 @@
 #include<stdio.h>
-#include<limits.h>
 #define MAX 10
+#define INF 100000
 
-void prim(int graph[MAX][MAX], int n){
-    int visited[MAX] = {0};
-    int parent[MAX] = {-1};
-    int weights[MAX] = {0};
-    visited[0] = 1;
-    for (int i=1; i<n; i++){
-        int minW = INT_MAX;
-        int minE = -1;
-        for (int j=0; j<n; j++){
-            if(visited[j]){
-                for(int k=0; k<n; k++){
-                    if(!visited[k] && graph[j][k] != 0 && graph[j][k] < minW){
-                        minW = graph[j][k];
-                        minE = k;
-                        parent[k] = j;
+int prims(int graph[MAX][MAX], int v, int visited[], int root){
+    int total = 0;
+    visited[root] = 1;
+    for(int edges=0; edges<v-1; edges++){
+        int min = INF;
+        int u=-1, w=-1;
+        for(int i=0; i<v; i++){
+            if(visited[i]){
+                for(int j=0; j<v; j++){
+                    if(!visited[j] && graph[i][j] && graph[i][j]<min){
+                        min = graph[i][j];
+                        u =i; w= j;
                     }
                 }
             }
         }
-        visited[minE] = 1;
-        weights[minE] = minW;
+        if(u!=-1 && w!=-1){
+            printf("%d -> %d : %d\n", u, w, graph[u][w]);
+            total += graph[u][w];
+            visited[w] = 1;
+        }
     }
-    int total = 0;
-    for(int i=1; i<n; i++){
-        printf("%d-%d: %d\n", parent[i], i, weights[i]);
-        total += weights[i];
-    }
-    printf("Total Weight: %d", total);
+    return total;
 }
 
 int main(){
-    int n;
-    printf("Enter n: ");
-    scanf("%d", &n);
-    int graph[MAX][MAX] = {0};
-    for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
+    int graph[MAX][MAX];
+    int v, root;
+    int visited[MAX] = {0};
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &v);
+
+    printf("Enter the adjacency matrix: ");
+    for(int i=0; i<v; i++){
+        for(int j=0; j<v; j++){
             scanf("%d", &graph[i][j]);
         }
     }
-    prim(graph, n);
+
+    printf("Enter the root: ");
+    scanf("%d", &root);
+
+    int cost = prims(graph, v, visited, root);
+    printf("Total Minimum Cost: %d", cost);
+
     return 0;
 }

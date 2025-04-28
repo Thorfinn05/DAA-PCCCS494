@@ -1,47 +1,65 @@
 #include<stdio.h>
-#include<limits.h>
-#define MAX 10
 
-void prim(int graph[MAX][MAX], int n){
-    int visited[MAX] = {0};
-    int parent[MAX] = {-1};
-    int weights[MAX] = {0};
-    visited[0] = 1;
-    for(int i=1; i<n; i++){
-        int minW = INT_MAX;
-        int minE = -1;
-        for(int j=0; j<n; j++){
-            if(visited[j]){
-                for(int k=0; k<n; k++){
-                    if(!visited[k] && graph[j][k] != 0 && graph[j][k] < minW){
-                        minW = graph[j][k];
-                        minE = k;
-                        parent[k] = j;
-                    }
-                }
-            }
+void merge(int arr[], int left, int right, int mid){
+    int i, j, k;
+    int n1 = mid-left+1;
+    int n2 = right-mid;
+    int L[n1], R[n2];
+    for(i=0; i<n1; i++){
+        L[i] = arr[left+i];
+    }
+    for(j=0; j<n2; j++){
+        R[j] = arr[mid+1+j];
+    }
+    i=0, j=0, k=left;
+    while(i<n1 && j<n2){
+        if(L[i] <= R[j]){
+            arr[k++] = L[i++];
         }
-        visited[minE] = 1;
-        weights[minE] = minW;
+        else{
+            arr[k++] = R[j++];
+        }
     }
-    int total = 0;
-    for(int i=1; i<n; i++){
-        printf("%d - %d: %d\n", parent[i], i, weights[i]);
-        total += weights[i];
+    while(i<n1)
+        arr[k++] = L[i++];
+    while(j<n2)
+        arr[k++] = R[j++];
+}
+
+void mergeSort(int arr[], int left, int right){
+    if(left < right){
+        int mid = left + (right-left)/2;
+
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid+1, right);
+        merge(arr, left, right, mid);
     }
-    printf("Total Weight: %d", total);
 }
 
 int main(){
     int n;
-    printf("Enter number of nodes: ");
+
+    printf("Enter population: ");
     scanf("%d", &n);
-    int graph[MAX][MAX] ={0};
+
+    int arr[n];
+    printf("Enter elements in array: ");
     for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
-            scanf("%d",&graph[i][j]);
-        }
+        scanf("%d", &arr[i]);
     }
-    prim(graph, n);
+
+    printf("Array: ");
+    for(int i=0; i<n; i++){
+        printf("%d ", arr[i]);
+    }
+
+    mergeSort(arr, 0, n-1);
+
+    printf("Sorted Array: ");
+    for(int i=0; i<n; i++){
+        printf("%d ", arr[i]);
+    }
+
     return 0;
+
 }

@@ -1,75 +1,69 @@
-#include <stdio.h>
-#include <limits.h>
-
+#include<stdio.h>
 #define MAX 10
+#define INF 1000000
 
-void dijkstra(int graph[MAX][MAX], int n, int src) {
-    int dist[MAX];  // Stores the shortest distance from source to each node
-    int visited[MAX] = {0};  // Marks visited nodes
-    int parent[MAX];  // Stores the shortest path tree
-
-    // Initialize distances and parent array
-    for (int i = 0; i < n; i++) {
-        dist[i] = INT_MAX;
-        parent[i] = -1;
+void dijkstra(int graph[MAX][MAX], int n, int source, int dist[], int visited[]){
+    int i, j, u, v, min;
+    for(i=0; i<n; i++){
+        dist[i] = INF;
+        visited[i] = 0;
     }
-    dist[src] = 0;  // Distance to source is 0
+    dist[source] = 0;
 
-    for (int i = 0; i < n - 1; i++) {
-        int minDist = INT_MAX, minIndex = -1;
+    for(i=0; i<n-1; i++){
+        min = INF;
+        u = -1;
 
-        // Find the node with the smallest distance that hasn't been visited
-        for (int j = 0; j < n; j++) {
-            if (!visited[j] && dist[j] < minDist) {
-                minDist = dist[j];
-                minIndex = j;
+        for(j=0; j<n; j++){
+            if(visited[j]==0 && dist[j] < min){
+                min = dist[j];
+                u = j;
             }
         }
 
-        visited[minIndex] = 1;
+        if(u==-1){
+            break;
+        }
+        visited[u] = 1;
 
-        // Update the distances of adjacent nodes
-        for (int k = 0; k < n; k++) {
-            if (!visited[k] && graph[minIndex][k] && dist[minIndex] != INT_MAX && 
-                dist[minIndex] + graph[minIndex][k] < dist[k]) {
-                dist[k] = dist[minIndex] + graph[minIndex][k];
-                parent[k] = minIndex;
+        for(v=0; v<n; v++){
+            if(visited[v]==0 && graph[u][v]!=0){
+                if(dist[u] + graph[u][v] < dist[v]){
+                    dist[v] = dist[u] + graph[u][v]; 
+                }
             }
         }
     }
-
-    // Print the shortest paths
-    printf("Vertex   Distance from Source   Path\n");
-    for (int i = 0; i < n; i++) {
-        printf("%d\t\t%d\t\t", i, dist[i]);
-        int temp = i;
-        while (parent[temp] != -1) {
-            printf("%d <- ", temp);
-            temp = parent[temp];
+    printf("Shortest distance from source %d to all vertices:\n", source);
+    for(i=0; i<n; i++){
+        if(dist[i] == INF){
+            printf("Vertex %d: INF\n", i);
         }
-        printf("%d\n", src);
+        else{
+            printf("Vertex %d: %d\n", i, dist[i]);
+        }
     }
 }
 
-int main() {
-    int n, src;
+int main(){
+    int graph[MAX][MAX];
+    int dist[MAX], visited[MAX];
+    int n, i, j, source;
 
-    printf("Enter number of nodes: ");
+    printf("Enter number of vertices: ");
     scanf("%d", &n);
 
-    int graph[MAX][MAX] = {0};
-
-    printf("Enter adjacency matrix:\n");
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+    printf("Enter the adcacency matrix:\n");
+    for(i=0; i<n; i++){
+        for(j=0; j<n; j++){
             scanf("%d", &graph[i][j]);
         }
     }
 
-    printf("Enter source vertex: ");
-    scanf("%d", &src);
+    printf("Enter the source vertex: ");
+    scanf("%d", &source);
 
-    dijkstra(graph, n, src);
+    dijkstra(graph, n, source, dist, visited);
 
     return 0;
 }

@@ -1,76 +1,54 @@
-#include <stdio.h>
-#include <limits.h>
+#include<stdio.h>
+#define MAX 100
+#define INF 1000000
 
-#define MAX 10 
+int tspGreedy(int cities[MAX][MAX], int visited[], int v, int start){
+    int total = 0, current = start;
+    visited[start] =  1;
 
-int findNearestCity(int graph[MAX][MAX], int visited[MAX], int n, int city) {
-    int minCost = INT_MAX, nearestCity = -1;
-	int i;
-    for ( i = 0; i < n; i++) {
-        if (!visited[i] && graph[city][i] < minCost) {
-            nearestCity = i;
-            minCost = graph[city][i];
+    printf("Minimum Tour: \n");
+    printf("%d", start);
+    
+    for (int i=1; i<v; i++){
+        int min = INF;
+        int nextCity = -1;
+        for(int j=0; j<v; j++){
+            if(!visited[j] && cities[current][j] && cities[current][j] < min){
+                min = cities[current][j];
+                nextCity = j;
+            }
+        }
+        if(nextCity != -1){
+            visited[nextCity] = 1;
+            total += min;
+            printf("-> %d ", nextCity);
+            current = nextCity;
+        }
+    }
+    total += cities[current][start];
+    printf("-> %d \n", start);
+    return total;
+}
+
+int main(){
+    int cities[MAX][MAX];
+    int v, start;
+    int visited[MAX] = {0};
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &v);
+
+    printf("Enter adjacencyn matrix: ");
+    for(int i=0; i<v; i++){
+        for(int j=0; j<v; j++){
+            scanf("%d", &cities[i][j]);
         }
     }
 
-    return nearestCity;
-}
+    printf("Enter starting point: ");
+    scanf("%d", &start);
+    int tour = tspGreedy(cities, visited, v, start);
 
-// Function to solve TSP using the Greedy Approach
-void tsp(int graph[MAX][MAX], int n, int startCity) {
-    int visited[MAX] = {0}; // Track visited cities
-    int path[MAX]; // Store the travel path
-    int totalCost = 0, city = startCity, count = 0;
-
-    visited[city] = 1; // Mark starting city as visited
-    path[count++] = city;
-
-    // Visit all cities using the greedy approach
-    while (count < n) {
-        int nearestCity = findNearestCity(graph, visited, n, city);
-
-        if (nearestCity != -1) {
-            visited[nearestCity] = 1;
-            path[count++] = nearestCity;
-            totalCost += graph[city][nearestCity];
-            city = nearestCity;
-        }
-    }
-
-    // Return to the starting city
-    totalCost += graph[city][startCity];
-    path[count] = startCity;
-
-    // Print the path and total cost
-    printf("Optimal Path (Greedy): ");
-    int i;
-    for ( i = 0; i <= n; i++)
-        printf("%d -> ", path[i]);
-    printf("\nTotal Cost: %d\n", totalCost);
-}
-
-// Main function
-int main() {
-    int n, startCity;
-    int graph[MAX][MAX];
-
-    // Input the number of cities
-    printf("Enter the number of cities: ");
-    scanf("%d", &n);
-
-    // Input the adjacency matrix
-    printf("Enter the distance matrix:\n");
-    int i,j;
-    for (i = 0; i < n; i++)
-        for ( j = 0; j < n; j++)
-            scanf("%d", &graph[i][j]);
-
-    // Input the starting city
-    printf("Enter the starting city (0 to %d): ", n - 1);
-    scanf("%d", &startCity);
-
-    // Solve TSP using the greedy approach
-    tsp(graph, n, startCity);
-
+    printf("Total Tour Cost: %d", tour);
     return 0;
 }
