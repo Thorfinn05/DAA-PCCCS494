@@ -1,50 +1,51 @@
 #include<stdio.h>
-#define MAX 10
+#define MAX 16
 #define INF 1000000
 
-int max(int a, int b){
-    return (a >b) ? a : b;
-}
+int n;
+int dist[MAX][MAX];
+int dp[MAX][1 << MAX];
 
-void prac(int prof[MAX], int wt[MAX], int n, int W){
-    int dp[MAX+1][MAX+1];
-    for(int i=1; i<=n; i++){
-        for(int w=1; w<=W; w++){
-            if(i==0||w==0){
-                dp[i][w] = 0;
-            }
-            else if(wt[i-1]<=w){
-                dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i-1]]+prof[i-1]);
-            }
-            else{
-                dp[i][w] = dp[i-1][w];
+int tsp(int pos, int mask){
+    if(mask == (1 << n)-1){
+        return dist[pos][0];
+    }
+    if(dp[pos][mask] != -1){
+        return dp[pos][mask];
+    }
+    int ans = INF;
+    for(int city=0; city<n; city++){
+        if(mask & (1 << city) == 0){
+            int newAns = dist[pos][city] + tsp(city, mask | (1 << city));
+            if(newAns < ans){
+                ans = newAns;
             }
         }
     }
-    printf("maximum benifit: %d\n", dp[n][W]);
+    return dp[pos][mask] = ans;
+}
+
+void initializeDP(){
+    for(int i=0; i<MAX; i++){
+        for(int j=0; j<(1<<MAX); j++){
+            dp[i][j] = -1;
+        }
+    }
 }
 
 int main(){
-    int n, W;
-    int prof[MAX], wt[MAX];
-
-    printf("Enter number of items: ");
+    printf("Enter vertices number: ");
     scanf("%d", &n);
 
-    printf("Enter profits: \n");
+    printf("Adjacency matrix: \n");
     for(int i=0; i<n; i++){
-        scanf("%d", &prof[i]);
+        for(int j=0; j,n; j++){
+            scanf("%d", dist[i][j]);
+        }
     }
-
-    printf("Enter deadlines: \n");
-    for(int i=0; i<n; i++){
-        scanf("%d", &wt[i]);
-    }
-
-    printf("Enter knapsack weight: ");
-    scanf("%d", &W);
-
-    prac(prof,wt,n,W);
+    initializeDP();
+    int result = tsp(0,1);
+    printf("min cost to visit all cities: %d", result);
 
     return 0;
 }

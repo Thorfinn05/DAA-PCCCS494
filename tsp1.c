@@ -1,80 +1,51 @@
 #include<stdio.h>
-#define MAX 20
+#define MAX 16
 #define INF 1000000
 
-int C[MAX][MAX];
 int n;
+int dist[MAX][MAX];
+int dp[MAX][1 << MAX];
 
-int cost(int i, int D[], int dSize, int visited[], int path[], int index){
-    if(dSize == 0){
-        path[index] = 1;
-        return C[i][1];
+int tsp(int pos, int mask){
+    if(mask == (1 << n)-1){
+        return dist[pos][0];
     }
-
-    int minCost = INF;
-    int bestCity = -1;
-
-    for(int k=0; k<dSize; k++){
-        int j=D[k];
-
-        if(visited[j]) continue;
-
-        visited[j] = 1;
-        path[index] = j;
-
-        int newD[MAX], newIndex = 0;
-        for(int m=0; m<dSize; m++){
-            if(m!=k){
-                newD[newIndex++] = D[m];
+    if(dp[pos][mask] != -1){
+        return dp[pos][mask];
+    }
+    int ans = INF;
+    for(int city=0; city<n; city++){
+        if(mask & (1 << city) == 0){
+            int newAns = dist[pos][city] + tsp(city, mask | (1 << city));
+            if(newAns < ans){
+                ans = newAns;
             }
         }
-        int newCost = C[i][j] + cost(j, newD, dSize-1, visited, path, index+1);
-
-        if(newCost < minCost){
-            minCost=newCost;
-            bestCity=j;
-        }
-        visited[j] = 0;
     }
-    return minCost;
+    return dp[pos][mask] = ans;
+}
+
+void initializeDP(){
+    for(int i=0; i<MAX; i++){
+        for(int j=0; j<(1<<MAX); j++){
+            dp[i][j] = -1;
+        }
+    }
 }
 
 int main(){
-    printf("Enter number of cities: ");
+    printf("Enter vertices number: ");
     scanf("%d", &n);
 
-    printf("Enter cost matrix: \n");
-    for(int i=1; i<=n; i++){
-        for(int j=0; j<=n; j++){
-            if(i==j){
-                C[i][j] =0;
-            }
-            else{
-                printf("Enter cost from %d to %d: ", i, j);
-            scanf("%d", &C[i][j]);
-            }
+    printf("Adjacency matrix: \n");
+    for(int i=0; i<n; i++){
+        for(int j=0; j,n; j++){
+            scanf("%d", dist[i][j]);
         }
     }
-    int D[MAX];
-    int dSize = 0;
-    for(int i=2; i<n; i++){
-        D[dSize++] = i;
-    }
-
-    int visited[MAX] = {0};
-    visited[1] = 1;
-
-    int path[MAX];
-
-    int tour = cost(1, D, dSize, visited, path, 1);
-
-    printf("\nMin tour cost: %d", tour);
-
-    printf("Best tour sequence: 1 -> ");
-    for(int i=1; i<=n-1; i++){
-        printf("%d -> ", path[i]);
-    }
-    printf("1\n");
+    initializeDP();
+    int result = tsp(0,1);
+    printf("min cost to visit all cities: %d", result);
 
     return 0;
 }
