@@ -2,56 +2,49 @@
 #define MAX 10
 #define INF 1000000
 
-int prac(int graph[MAX][MAX], int dist[MAX], int n, int src){
-    for(int edges=1; edges<n; edges++){
-        for(int u=0; u<n; u++){
-            for(int v=0; v<n; v++){
-                if(graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]){
-                    dist[v] =  dist[u] + graph[u][v];
-                }
+int max(int a, int b){
+    return (a >b) ? a : b;
+}
+
+void prac(int prof[MAX], int wt[MAX], int n, int W){
+    int dp[MAX+1][MAX+1];
+    for(int i=1; i<=n; i++){
+        for(int w=1; w<=W; w++){
+            if(i==0||w==0){
+                dp[i][w] = 0;
+            }
+            else if(wt[i-1]<=w){
+                dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i-1]]+prof[i-1]);
+            }
+            else{
+                dp[i][w] = dp[i-1][w];
             }
         }
     }
-    for(int u=0; u<n; u++){
-        for(int v=0; v<n; v++){
-            if(graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]){
-                printf("graph contain negative edge!\n");
-                break;
-            }
-        }
-    }
-    printf("Shortest distance from %d vertex to all vertices.\n");
-    for(int i=0; i<n; i++){
-        if(dist[i] == INF){
-            printf("vertex %d: INF", i);
-        }
-        else{
-            printf("Vertex %d : %d\n", i, dist[i]);
-        }
-    }
+    printf("maximum benifit: %d\n", dp[n][W]);
 }
 
 int main(){
-    int graph[MAX][MAX];
-    int dist[MAX];
-    int v, src;
+    int n, W;
+    int prof[MAX], wt[MAX];
 
-    printf("Enter number of vertices: ");
-    scanf("%d", &v);
-    printf("Adjacency matrix: \n");
-    for(int i=0; i<v; i++){
-        for(int j=0; j<v; j++){
-            scanf("%d", &graph[i][j]);
-        }
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    printf("Enter profits: \n");
+    for(int i=0; i<n; i++){
+        scanf("%d", &prof[i]);
     }
-    printf("Enter source: ");
-    scanf("%d", &src);
 
-    for(int i=0; i<v; i++){
-        dist[i] = INF;
+    printf("Enter deadlines: \n");
+    for(int i=0; i<n; i++){
+        scanf("%d", &wt[i]);
     }
-    dist[src] = 0;
 
-    prac(graph, dist, v, src);
+    printf("Enter knapsack weight: ");
+    scanf("%d", &W);
+
+    prac(prof,wt,n,W);
+
     return 0;
 }
