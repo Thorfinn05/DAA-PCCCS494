@@ -37,7 +37,7 @@ int kruskal(int edges[MAX][3], int e, int visited[]){
             int new_comp = visited[u];
 
             // Merge components
-            for(int j=0; j<e; j++){
+            for(int j=0; j<v; j++){
                 if(visited[j] == old_comp){
                     visited[j] = new_comp;
                 }

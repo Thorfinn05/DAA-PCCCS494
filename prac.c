@@ -1,58 +1,62 @@
 #include<stdio.h>
-#include<stdlib.h>
 #define MAX 10
-int queue[MAX];
-int stack[MAX];
-int n, i, choice, front = -1, rear = -1, top = -1;
+int x[MAX];
 
-void bfs(int graph[MAX][MAX], int n, int root){
-    int visited[MAX] = {0};
-    front = 0; rear = 0;
-    visited[root] = 1;
-    queue[rear++] = root;
-    while(front<rear){
-        int u = queue[front++];
-        printf("%d ", u);
-        for(int v=0; v<n; v++){
-            if(graph[u][v] == 1 && !visited[v]){
-                visited[v] = 1;
-                queue[rear++] = v;
+void nextvalue(int graph[MAX][MAX], int k, int m, int n){
+    while(1){
+        x[k] = x[k+1] % (m+1);
+        if (x[k]==0)
+            return;
+        int j;
+        for(int j=0; j<n; j++){
+            if(graph[j][k] != 0 && x[k]==x[j])
+                break;
+        }
+        if(j==n)
+            return;
+    }
+}
+
+void mColoring(int graph[MAX][MAX], int k, int m, int n){
+    while(1){
+        nextvalue(graph, k, m, n);
+        if(x[k]==0){
+            return;
+        }
+        if(k==n-1){
+            for(int i=0; i<n; i++){
+                printf("%d", x[i]);
             }
+            printf("\n");
+        }
+        else{
+            mColoring(graph, k+1, m, n);
         }
     }
 }
 
-void dfs(int graph[MAX][MAX], int root){
-    int visited[MAX] = {0};
-    stack[++top] = root;
-    while(top != -1){
-        int u = stack[top--];
-        if(!visited[u]){
-            printf("%d ", u);
-            visited[u] = 1;
-            for(int v=n-1; v>0; v--){
-                if(graph[u][v] == 1 && !visited[v]){
-                    stack[++top] = v;
-                }
-            }
-        }
-    }
-}
 int main(){
     int graph[MAX][MAX];
-    int root;
+    int n, m;
+
     printf("Enter n: ");
     scanf("%d", &n);
-    printf("Adjacency matrix: \n");
+
+    printf("Enter adjacency matrix: \n");
     for(int i=0; i<n; i++){
         for(int j=0; j<n; j++){
             scanf("%d", &graph[i][j]);
         }
     }
-    printf("Enter root: ");
-    scanf("%d", &root);
-    bfs(graph, n, root);
-    printf("\n");
-    dfs(graph, root);
+    
+    printf("Enter no. of colors: ");
+    scanf("%d", &m);
+
+    for(int i=0; i<n; i++){
+        x[i] = 0;
+    }
+
+     printf("Assigned COLORS: \n");
+    mColoring(graph, 0, m, n);
     return 0;
 }

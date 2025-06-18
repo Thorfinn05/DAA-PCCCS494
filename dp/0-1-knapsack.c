@@ -92,7 +92,7 @@ int main(){
         scanf("%d", &prof[i]);
     }
 
-    printf("Enter deadlines: \n");
+    printf("Enter weights: \n");
     for(int i=0; i<n; i++){
         scanf("%d", &wt[i]);
     }

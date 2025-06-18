@@ -28,7 +28,7 @@ void nQueensP(char graph[MAX][MAX], int n, int r){
     }
     else{
         for(int c=0; c<n; c++){
-            if(isSafe(graph, n, r, c) && graph[r][c] == '.'){
+            if(isSafe(graph, n, r, c)){
                 graph[r][c] = 'Q';
                 nQueensP(graph, n, r+1);
                 graph[r][c] = '.';
@@ -48,15 +48,6 @@ int main(){
             graph[i][j] = '.';
         }
     }
-
-    // for(int i=0; i<n; i++){
-    //     for(int j=0; j<n; j++){
-    //         printf("%c ", graph[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n");
-
     printf("Boards: \n");
     nQueensP(graph, n, 0);
     return 0;
