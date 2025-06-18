@@ -1,68 +1,57 @@
 #include<stdio.h>
-#include<stdlib.h>
-#define INF 99999
-#define MAX 100
+#define MAX 10
+#define INF 1000000
 
-typedef struct {
-    int u, v, w;
-} Edge;
+int prac(int graph[MAX][MAX], int dist[MAX], int n, int src){
+    for(int edges=1; edges<n; edges++){
+        for(int u=0; u<n; u++){
+            for(int v=0; v<n; v++){
+                if(graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]){
+                    dist[v] =  dist[u] + graph[u][v];
+                }
+            }
+        }
+    }
+    for(int u=0; u<n; u++){
+        for(int v=0; v<n; v++){
+            if(graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]){
+                printf("graph contain negative edge!\n");
+                break;
+            }
+        }
+    }
+    printf("Shortest distance from %d vertex to all vertices.\n");
+    for(int i=0; i<n; i++){
+        if(dist[i] == INF){
+            printf("vertex %d: INF", i);
+        }
+        else{
+            printf("Vertex %d : %d\n", i, dist[i]);
+        }
+    }
+}
 
-void bellmanFord(Edge edges[], int V, int E, int src){
+int main(){
+    int graph[MAX][MAX];
     int dist[MAX];
+    int v, src;
 
-    for(int i=0; i<V; i++){
+    printf("Enter number of vertices: ");
+    scanf("%d", &v);
+    printf("Adjacency matrix: \n");
+    for(int i=0; i<v; i++){
+        for(int j=0; j<v; j++){
+            scanf("%d", &graph[i][j]);
+        }
+    }
+    printf("Enter source: ");
+    scanf("%d", &src);
+
+    for(int i=0; i<v; i++){
         dist[i] = INF;
     }
     dist[src] = 0;
 
-    for (int i=1; i<=V-1; i++){
-        for (int j=0; j<E; j++){
-            int u = edges[j].u;
-            int v = edges[j].v;
-            int w = edges[j].w;
-
-            if(dist[u] != INF && dist[u] + w < dist[v]){
-                dist[v] = dist[u] + w;
-            }
-        }
-    }
-    for(int j=0; j<E; j++){
-        int u = edges[j].u;
-        int v = edges[j].v;
-        int w = edges[j].w;
-
-        if(dist[u] != INF && dist[u] + w < dist[v]){
-            printf("\nGraph contains qa negative weight cycle!\n");
-            return;
-        }
-    }
-    printf("\nVertex\tDistance from Source %d\n", src);
-    for(int i =0; i<V; i++){
-        if(dist[i]==INF)
-            printf("%d\t\tINF\n", i);
-        else    
-            printf("%d\t\t%d\n", i, dist[i]);
-    }
-}
-
-int main() {
-    int V, E;
-    Edge edges[MAX];
-
-    printf("Enter number of vertices and edges: ");
-    scanf("%d %d", &V, &E);
-
-    printf("Enter each edge in format (u v weight):\n");
-    for (int i = 0; i < E; i++) {
-        printf("Edge %d: ", i + 1);
-        scanf("%d %d %d", &edges[i].u, &edges[i].v, &edges[i].w);
-    }
-
-    int src;
-    printf("Enter source vertex: ");
-    scanf("%d", &src);
-
-    bellmanFord(edges, V, E, src);
-
+    prac(graph, dist, v, src);
     return 0;
 }

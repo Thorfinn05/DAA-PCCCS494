@@ -1,65 +1,57 @@
 #include<stdio.h>
+#define MAX 10
+#define INF 1000000
 
-void merge(int arr[], int left, int right, int mid){
-    int i, j, k;
-    int n1 = mid-left+1;
-    int n2 = right-mid;
-    int L[n1], R[n2];
-    for(i=0; i<n1; i++){
-        L[i] = arr[left+i];
+int prac(int graph[MAX][MAX], int dist[MAX], int n, int src){
+    for(int edges=1; edges<n; edges++){
+        for(int u=0; u<n; u++){
+            for(int v=0; v<n; v++){
+                if(graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]){
+                    dist[v] =  dist[u] + graph[u][v];
+                }
+            }
+        }
     }
-    for(j=0; j<n2; j++){
-        R[j] = arr[mid+1+j];
+    for(int u=0; u<n; u++){
+        for(int v=0; v<n; v++){
+            if(graph[u][v] && dist[u] != INF && dist[u] + graph[u][v] < dist[v]){
+                printf("graph contain negative edge!\n");
+                break;
+            }
+        }
     }
-    i=0, j=0, k=left;
-    while(i<n1 && j<n2){
-        if(L[i] <= R[j]){
-            arr[k++] = L[i++];
+    printf("Shortest distance from %d vertex to all vertices.\n");
+    for(int i=0; i<n; i++){
+        if(dist[i] == INF){
+            printf("vertex %d: INF", i);
         }
         else{
-            arr[k++] = R[j++];
+            printf("Vertex %d : %d\n", i, dist[i]);
         }
-    }
-    while(i<n1)
-        arr[k++] = L[i++];
-    while(j<n2)
-        arr[k++] = R[j++];
-}
-
-void mergeSort(int arr[], int left, int right){
-    if(left < right){
-        int mid = left + (right-left)/2;
-
-        mergeSort(arr, left, mid);
-        mergeSort(arr, mid+1, right);
-        merge(arr, left, right, mid);
     }
 }
 
 int main(){
-    int n;
+    int graph[MAX][MAX];
+    int dist[MAX];
+    int v, src;
 
-    printf("Enter population: ");
-    scanf("%d", &n);
-
-    int arr[n];
-    printf("Enter elements in array: ");
-    for(int i=0; i<n; i++){
-        scanf("%d", &arr[i]);
+    printf("Enter number of vertices: ");
+    scanf("%d", &v);
+    printf("Adjacency matrix: \n");
+    for(int i=0; i<v; i++){
+        for(int j=0; j<v; j++){
+            scanf("%d", &graph[i][j]);
+        }
     }
+    printf("Enter source: ");
+    scanf("%d", &src);
 
-    printf("Array: ");
-    for(int i=0; i<n; i++){
-        printf("%d ", arr[i]);
+    for(int i=0; i<v; i++){
+        dist[i] = INF;
     }
+    dist[src] = 0;
 
-    mergeSort(arr, 0, n-1);
-
-    printf("Sorted Array: ");
-    for(int i=0; i<n; i++){
-        printf("%d ", arr[i]);
-    }
-
+    prac(graph, dist, v, src);
     return 0;
-
 }
